@@ -1,0 +1,174 @@
+---
+################
+# gwm 20150411
+# NOTE: assumes:
+#       This all resides in
+#       $HOME/vagrant
+#################
+
+- hosts: 127.0.0.1
+  connection: local
+#  gather_facts: false
+
+  vars:
+    vagrant_path: "{{ playbook_dir }}"
+    vagrant_file: "{{ vagrant_path }}/Vagrantfile"
+
+  tasks: 
+  - name: Ensure virtualbox is loaded
+    sudo: yes
+    apt: name=virtualbox state=latest
+
+  - name: Ensure that vagrant is installed
+    sudo: yes
+    apt: name=vagrant state=latest
+
+  - name: Ensure Vagrantfile exists
+    #sudo: yes
+    stat: path="{{ vagrant_file }}"
+    #stat: path=/tmp/Vagrantfile
+    register: stat_result
+
+  - name: Testing to see if {{ vagrant_file }} exists is true
+    debug: msg="{{ vagrant_file }} does exist"
+    when: stat_result.stat.exists == true
+
+  - name: fire up vagrant
+    local_action: command /usr/bin/vagrant up chdir=/data/images/vagrant/gwm1 
+    async: 3600
+    poll: 10
+
+- hosts: all
+  vars:
+    - docroot: /var/www/html
+    - domain: my.lab
+    - user_password: "$6$SomeSalt$bUGZDQdHkOthHB9bEyJRxJcBa.lmqv46uGXAtHBIMnTO5LC8wHFMyEt65N/BhPuCfeg8eE1zqc8VNRFYB9sfX1"
+
+  sudo: true
+  tasks:
+    #    - include_vars: secrets.yml
+
+
+#    - debug: msg= " docroot = {{ docroot }} "
+#
+#
+#    #  copy: src=/tmp/sysreadme.sh dest=/tmp/sysreadme.sh backup=yes owner=wocos group=wocos
+#    #   #when: user_wocos|success
+#
+    - name: Update apt cache
+      apt: update_cache=yes
+
+#      - name: apt upgrade
+#        apt: upgrade=yes update_cache=yes dpkg_options='force-confold,force-confdef'
+#
+    - name: install required packages
+      apt: name={{ item }} state=present
+      with_items:
+        - vim
+        - virtualbox-guest-utils
+        - ntp
+#        - lynx
+#        - screen
+#        - inxi
+#
+#    - name: install admin packages
+#      apt: name={{ item }} state=present
+#      with_items:
+#        - nmap
+#        - lsof
+#        - make
+#
+#    - name: Install MySQL client server and related libraries
+#      apt: name={{ item }} state=latest
+#      with_items:
+#        - mysql-client
+#        - mysql-server
+#      notify:
+#        - Start mysql server
+#
+#
+#    - name: Install PHP and its modules
+#      apt: pkg={{ item }} state=latest
+#      with_items:
+#        - php5
+#        - php5-cli
+#        - php5-curl
+#        - php5-gd
+#        - php5-imagick
+#        - php5-mysql
+#        - php5-xmlrpc
+#
+#    - name: Install Apache and its module9(s)
+#      apt: pkg={{ item }} state=latest
+#      with_items:
+#        - apache2
+#        - libapache2-mod-php5
+#      register: apacheinstalled
+#
+##    - name: Activate mod_rewrite
+##      apache2_module: name=rewrite state=present
+#
+#      notify:
+#        - Start apache server
+#
+#    - name: Create web root
+#      when: apacheinstalled|success
+#      file: dest=/var/www/html mode=775 state=directory owner=www-data group=www-data 
+#      notify: 
+#        - Reload apache
+#
+    # Add the user 'wocos' 
+
+    - name: Add user wocos
+      user: name=wocos groups=sudo,admin
+        shell=/bin/bash 
+        generate_ssh_key=yes 
+        ssh_key_file=.ssh/id_rsa 
+        createhome=yes state=present
+        password="{{user _password }}"
+         # created with:
+         # python -c 'import crypt; print crypt.crypt("This is my Password", "$6$SomeSalt$")'
+   
+        # another interactive way to add a password
+        # vars_prompt:
+        # - name: "user_password"
+        #   prompt: "Enter a password for the user: "
+        #   private: yes
+        #   encrypt: "md5_crypt" # needs python-passlib installed
+        #   confirm: yes
+        #   salt_size: 7
+        # password="{{ user_password }}"
+
+#    - stat: path=/etc/README.sys
+#      tags: tst
+#      register: readme_sys
+#
+#    - name: run sysreadme.sh 
+#      tags: tst
+#      script: /tmp/sysreadme.sh 
+#      when: readme_sys.stat.exists == False
+#      register: sysreadme_result
+#      #failed_when:
+#      #  sysreadme_result.rc != 0 and ("already exists" not in sysreadme_result.stderr)
+#      #changed_when: "sysreadme_result.rc == 0"
+#
+#        #creates=/etc/README.sys
+#
+#      register: sysreadme_sys
+#
+#      #    - debug: var=sysreadme
+#
+#      #    - name: check sysreadme
+#      #assert: 
+#      #  that:
+#      #    - sysreadme.stat.exist 
+#
+#  handlers:
+#    - name: Start mysql server
+#      service: name=mysql state=started enabled=yes
+#
+#    - name: Start apache
+#      service: name=apache2 state=restarted enabled=yes
+#
+#    - name: Reload apache
+#      service: name=apache2 state=reloaded
