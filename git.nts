@@ -29,7 +29,8 @@ If your want to grab this project and place it on your local system you can now 
 You should now have a directory ${HOME}/dev/git/fsw with the full contents of the fsw.git project.
 
 
-To start a project and intialize it for git do this:
+To start a project and initialize it for git do this:
+
 '''
 - mkdir fsw # "fsw" will become the project repository name - best to keep it short
 - chdir fsw
@@ -39,6 +40,7 @@ To start a project and intialize it for git do this:
 '''
 
 At this point git knows about the README.md but it has not taken custody of it yet - that happens when you "commit" it so lets do that now.
+
 '''
 - git commit -m "My first commit" # git requires that you record a message (ie -m "my message"
 '''
@@ -50,9 +52,10 @@ But one of the great features of git (and other version control systems) is that
 git remote add origin https://github.com/fullspectrumworks/fsw.git
 '''
 
-Nothing really happend yet. This information was stored in the.git system directory. The fsw.git was used becuase it is best practice to end your project name on github with ".git". The "origin" name establishes an origin or target location. The "master" refers to the branch. All projects are initialized with a default branch of "master". You don't need to be too concerned with branches when starting out with git.
+Nothing really happened yet. This information was stored in the.git system directory. The fsw.git was used becuase it is best practice to end your project name on github with ".git". The "origin" name establishes an origin or target location. The "master" refers to the branch. All projects are initialized with a default branch of "master". You don't need to be too concerned with branches when starting out with git.
 
 Now we need to push a full copy of your project up to your github repository.
+
 '''
 git push -u origin master # git will push updates to the origin of your master (default) branch
 '''
@@ -61,9 +64,10 @@ You now have a full git project on your system and a full clone on github.
 
 There is *much* more to git but this should get you started.
 
-```
 created by: geoff mcnamara
+
 created on: 20150319
+
 modified by: geoff mcnamara 
+
 modified on: 
-'''
