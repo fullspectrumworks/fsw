@@ -326,15 +326,11 @@ char serverRequest(String postData){
 void loop() {
     displayPersistentMessage(swipeRfidMessage, blankLine);
     char* rfidCode = getRFID();
-String debugRFID(rfidCode);
-displayPersistentMessage(debugRFID, blankLine);
-delay(5000);
 
     if(rfidCode[0] != 0){                                  //only connect to the server if a rfid has been read
         String pin = getPIN();
         if(pin.length() == 4){                             //only connect to the server if a pin has been entered
             String rfidCodeString(rfidCode);
-rfidCodeString = "0F0304012D";
             String rfidAndPin = rfidCodeString + "," + pin;
             char serverResponse = serverRequest(rfidAndPin);
             openDoor(serverResponse);

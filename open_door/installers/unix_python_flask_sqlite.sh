@@ -26,8 +26,8 @@ sudo python ../databases/python/sqlite/scripts/create_new_rfid_table.py
 sleep 1
 sudo mv people.db /var/open_door/database/tables
 sudo mv new_rfid.db /var/open_door/database/tables
-#sudo apt-get install python-pip
-#sudo pip install flask
+sudo apt-get install python-pip
+sudo pip install flask
 clear
 echo ".------------------------------------------------------------------------------."
 echo "|                            Open Door Installer                               |"
