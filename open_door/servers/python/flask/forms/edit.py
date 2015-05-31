@@ -20,7 +20,7 @@ def lookup():
 	if request.method == 'POST':
 		conn = sqlite3.connect('../database/tables/people.db')
 		c = conn.cursor()
-		c.execute("UPDATE people SET access_permission = '" + request.form["access_permission"] + "', pin = '" + request.form["pin"] + "', rfid = '" + request.form["rfid"] + "', last_name = '" + request.form["last_name"] + "', first_name = '" + request.form["first_name"] + "', username = '" + request.form["username"] + "', birthdate = '" + request.form["birthdate"] + "' WHERE rfid = '" + request.form["rfid"] + "'")
+		c.execute("UPDATE people SET access_permission = " + request.form["access_permission"] + ", presence_state = " + request.form["presence_state"] + ", pin = " + request.form["pin"] + ", rfid = '" + request.form["rfid"] + "', last_name = '" + request.form["last_name"] + "', first_name = '" + request.form["first_name"] + "', username = '" + request.form["username"] + "', birthdate = '" + request.form["birthdate"] + "' WHERE rfid = '" + request.form["rfid"] + "'")
 		c.execute("SELECT first_name, last_name FROM people WHERE rfid = '" + request.form["rfid"] + "'")
 		member = str(c.fetchone())
 		conn.commit()
@@ -103,6 +103,9 @@ def lookup():
                     </div>
                     <div>
                         <div>Access Granted?</div><div><input type="radio" name="access_permission" value="0" checked required>No<input type="radio" name="access_permission" value="1" required>Yes</div>
+                    </div>
+                    <div>
+                        <div>Is Present?</div><div><input type="radio" name="presence_state" value="0" checked required>No<input type="radio" name="presence_state" value="1" required>Yes</div>
                     </div>
                     <div>
                         <div>Enter PIN</div><div><input type="password" id="pin" pattern="[0-9]{4}" title="Four digit PIN required." required></div>

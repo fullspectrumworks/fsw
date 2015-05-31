@@ -76,7 +76,6 @@ const int accessGrantedMessageDelay = 1000;
 const int accessDeniedMessageDelay = 1000;
 const int doorDelay = 3000;
 const int doorDriverPin = 9;
-const char openDoorControlByte = '1';
 
 //rfid reader constants
 const int cardReadDelay = 1500;
@@ -85,7 +84,7 @@ const String swipeRfidMessage = "SWIPE RFID CARD";
 
 //client and server constants
 byte macAddress[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED}; //default mac address used for this arduino
-const byte ipAddress[] = {192, 168, 1, 2};                //address of a server on the local network. WARNING: the ip address is randomly reassigned find the new address with ifconfig or ipconfig
+const byte ipAddress[] = {192, 168, 1, 3};                //address of a server on the local network. WARNING: the ip address is randomly reassigned find the new address with ifconfig or ipconfig
 const int serverPort = 100;                               //specifies which port to connect to on the server (use port 101, 102, 103, etc. if you plan on using more than one client system)
 const String successfulConnectionMessage = "CONNECTED";
 const String unsuccessfulConnectionMessage = "FAILED";
@@ -140,6 +139,16 @@ String getPIN(){
   int val;
 
   while(pin.length() < 4 && keypadTimer < keypadTimeLimit){
+    //read the state of the pushbutton value
+    buttonState = digitalRead(buttonPin);
+
+    //if the pushbutton is high, this means a user is trying to leave from the inside,
+    //this will assign a special exit code to send to the server instead of a normal PIN
+    if (buttonState == HIGH){
+        pin = "EXIT";
+        break;
+    }
+
     //setting the columns as high initially
     digitalWrite(c1,HIGH);
     digitalWrite(c2,HIGH);
@@ -315,22 +324,17 @@ char serverRequest(String postData){
 //                         Main Loop                           //
 /////////////////////////////////////////////////////////////////
 void loop() {
-    // read the state of the pushbutton value:
-    buttonState = digitalRead(buttonPin);
-
-    // check if the pushbutton is pressed.
-    // if it is, the buttonState is HIGH:
-    if (buttonState == HIGH){
-        openDoor(openDoorControlByte);
-    }
     displayPersistentMessage(swipeRfidMessage, blankLine);
-
     char* rfidCode = getRFID();
+String debugRFID(rfidCode);
+displayPersistentMessage(debugRFID, blankLine);
+delay(5000);
 
     if(rfidCode[0] != 0){                                  //only connect to the server if a rfid has been read
         String pin = getPIN();
         if(pin.length() == 4){                             //only connect to the server if a pin has been entered
             String rfidCodeString(rfidCode);
+rfidCodeString = "0F0304012D";
             String rfidAndPin = rfidCodeString + "," + pin;
             char serverResponse = serverRequest(rfidAndPin);
             openDoor(serverResponse);

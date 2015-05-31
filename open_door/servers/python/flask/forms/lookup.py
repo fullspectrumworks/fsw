@@ -20,18 +20,14 @@ def lookup():
 	if request.method == 'POST':
 		conn = sqlite3.connect('../database/tables/people.db')
 		c = conn.cursor()
-		table = "<table><th colspan='6'>Members</th>"
-		table += "<tr><td>Access Granted?</td><td>RFID</td><td>Last Name</td><td>First Name</td><td>Username</td><td>Birthdate</td></tr>"
-		for row in c.execute("SELECT access_permission, rfid, last_name, first_name, username, birthdate FROM people WHERE access_permission ='" + request.form["access_permission"] + "' OR last_name='" + request.form["last_name"] + "' OR first_name ='" + request.form["first_name"] + "' OR username ='" + request.form["username"] + "' OR birthdate ='" + request.form["birthdate"] + "'"):
+		table = "<table><th colspan='7'>Members</th>"
+		table += "<tr><td>Access Granted?</td><td>Present?</td><td>RFID</td><td>Last Name</td><td>First Name</td><td>Username</td><td>Birthdate</td></tr>"
+		for row in c.execute("SELECT access_permission, presence_state, rfid, last_name, first_name, username, birthdate FROM people WHERE access_permission =" + request.form["access_permission"] + " OR presence_state =" + request.form["presence_state"] + " OR last_name='" + request.form["last_name"] + "' OR first_name ='" + request.form["first_name"] + "' OR username ='" + request.form["username"] + "' OR birthdate ='" + request.form["birthdate"] + "'"):
 			temp_row = str(row)[1:-1]
 			temp_row = re.split(", u|,", temp_row)
 			temp_row[-1] = temp_row[-1].strip()
 			table += "<tr>"
 			for cell in temp_row:
-				if(cell == "1"):
-					cell = "yes"
-				elif(cell == "0"):
-					cell = "no"
 				table += "<td>" + cell + "</td>"
 			table += "</tr>"
 		table += "</table>"
@@ -125,6 +121,9 @@ def lookup():
                     </div>
                     <div>
                         <div>Permitted Access?</div><div><input type="radio" name="access_permission" value="0" checked>No<input type="radio" name="access_permission" value="1">Yes<input type="radio" name="access_permission">N/A</div>
+                    </div>
+                    <div>
+                        <div>Is Present?</div><div><input type="radio" name="presence_state" value="0" checked required>No<input type="radio" name="presence_state" value="1" required>Yes</div>
                     </div>
                     <div>
                         <div><input type="submit" value="submit"></div>

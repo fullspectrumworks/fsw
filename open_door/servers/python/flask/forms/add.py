@@ -25,7 +25,7 @@ def login():
     if request.method == 'POST':
 	conn = sqlite3.connect('../database/tables/people.db')
 	c = conn.cursor()
-	c.execute("INSERT INTO people VALUES (" + request.form["access_permission"] + "," + request.form["pin"] + ",'" + request.form["rfid"] + "','" + request.form["last_name"] + "','" + request.form["first_name"] + "','" + request.form["username"] + "','" + request.form["birthdate"] + "')")
+	c.execute("INSERT INTO people VALUES (" + request.form["access_permission"] + ",0," + request.form["pin"] + ",'" + request.form["rfid"] + "','" + request.form["last_name"] + "','" + request.form["first_name"] + "','" + request.form["username"] + "','" + request.form["birthdate"] + "')")
 	conn.commit()	
 	conn.close()
         

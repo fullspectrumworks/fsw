@@ -10,6 +10,6 @@
 import sqlite3
 conn = sqlite3.connect('people.db')
 c = conn.cursor()
-c.execute("INSERT INTO people VALUES ('Doe','John','username','01/01/1990','0F030387CA',1,1234)")
+c.execute("INSERT INTO people VALUES (0,0,1234,'0F030387CA','Doe','John','username','01/01/1990')")
 conn.commit()
 conn.close()

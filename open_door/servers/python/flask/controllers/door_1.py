@@ -19,6 +19,13 @@ from flask import Flask, request
 import sqlite3
 app = Flask(__name__)
 
+def set_presence_state(presence_state, rfid):
+	conn = sqlite3.connect('../database/tables/people.db')
+	c = conn.cursor()
+	c.execute("UPDATE people SET presence_state=" + presence_state + " WHERE rfid = '" + rfid + "'")
+	conn.commit()
+	conn.close()
+
 def access_permission_query(rfid, pin):
 	hasAccess = "0"
 	conn = sqlite3.connect('../database/tables/people.db')
@@ -33,10 +40,10 @@ def access_permission_query(rfid, pin):
 	conn.close()
 	return hasAccess
 
-def is_new_person(rfid, pin):
+def is_new_person(rfid):
 	conn = sqlite3.connect('../database/tables/people.db')
 	c = conn.cursor()
-	c.execute("SELECT * FROM people WHERE rfid='" + rfid + "' AND pin=" + pin)
+	c.execute("SELECT * FROM people WHERE rfid='" + rfid + "'")
 	record = str(c.fetchone())
 	conn.close()
 
@@ -55,11 +62,18 @@ def is_new_person(rfid, pin):
 def access_request():
 	if(request.method == "POST"):
 		post_request = request.get_data()
-		post_request_array = post_request.split(",");
-		rfid = post_request_array[0];
-		pin = post_request_array[1];
-		is_new_person(rfid, pin)
-		return access_permission_query(rfid, pin)
+		post_request_array = post_request.split(",")
+		rfid = post_request_array[0]
+		pin = post_request_array[1]
+		access_permission = "0"
+		if(is_new_person(rfid) == False):
+			if(pin == "EXIT"):
+				set_presence_state("0", rfid)
+				access_permission = "1"
+			elif(access_permission_query(rfid, pin) == "1"):
+				set_presence_state("1", rfid)
+				access_permission = "1"
+		return access_permission
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=100, debug=True)

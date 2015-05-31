@@ -20,6 +20,6 @@
 import sqlite3
 conn = sqlite3.connect('people.db')
 c = conn.cursor()
-c.execute('''CREATE TABLE people (access_permission integer, pin integer, rfid text, last_name text, first_name text, username text, birthdate text)''')
+c.execute('''CREATE TABLE people (access_permission integer, presence_state integer, pin integer, rfid text, last_name text, first_name text, username text, birthdate text)''')
 conn.commit()
 conn.close()
