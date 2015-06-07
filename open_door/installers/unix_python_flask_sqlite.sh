@@ -26,8 +26,19 @@ sudo python ../databases/python/sqlite/scripts/create_new_rfid_table.py
 sleep 1
 sudo mv people.db /var/open_door/database/tables
 sudo mv new_rfid.db /var/open_door/database/tables
-sudo apt-get install python-pip
-sudo pip install flask
+#sudo apt-get install python-pip
+#sudo pip install flask
+# open door network change and activate static ip network
+echo auto lo                  >  /etc/network/interfaces
+echo iface lo inet loopback  >> /etc/network/interfaces
+echo auto eth0               >> /etc/network/interfaces
+echo iface eth0 inet static  >> /etc/network/interfaces
+echo address 192.168.1.4     >> /etc/network/interfaces
+echo gateway 192.168.1.1     >> /etc/network/interfaces
+echo netmask 255.255.255.0   >> /etc/network/interfaces
+echo network 192.168.1.0     >> /etc/network/interfaces
+echo broadcast 192.168.1.255 >> /etc/network/interfaces
+sudo /etc/init.d/networking restart
 clear
 echo ".------------------------------------------------------------------------------."
 echo "|                            Open Door Installer                               |"

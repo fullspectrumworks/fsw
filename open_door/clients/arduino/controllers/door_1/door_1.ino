@@ -84,7 +84,7 @@ const String swipeRfidMessage = "SWIPE RFID CARD";
 
 //client and server constants
 byte macAddress[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED}; //default mac address used for this arduino
-const byte ipAddress[] = {192, 168, 1, 3};                //address of a server on the local network. WARNING: the ip address is randomly reassigned find the new address with ifconfig or ipconfig
+const byte ipAddress[] = {192, 168, 1, 4};                //address of a server on the local network. WARNING: the ip address is randomly reassigned find the new address with ifconfig or ipconfig
 const int serverPort = 100;                               //specifies which port to connect to on the server (use port 101, 102, 103, etc. if you plan on using more than one client system)
 const String successfulConnectionMessage = "CONNECTED";
 const String unsuccessfulConnectionMessage = "FAILED";
