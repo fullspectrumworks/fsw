@@ -333,8 +333,7 @@ char serverRequest(String postData){
 //                         Main Loop                           //
 /////////////////////////////////////////////////////////////////
 void loop() {
-/*
-    displayPersistentMessage(swipeRfidMessage, blankLine);
+    displayMessage(swipeRfidMessage, blankLine, swipeRfidMessageDelay, false);
     char* rfidCode = getRFID();
 
     if(rfidCode[0] != 0){                                  //only connect to the server if a rfid has been read
@@ -346,8 +345,7 @@ void loop() {
             openDoor(serverResponse);
         }
     }
-*/
-displayMessage(swipeRfidMessage, blankLine, swipeRfidMessageDelay, false);
-openDoor(serverRequest("0F0304012D,1111"));
-delay(10000);
+//displayMessage(swipeRfidMessage, blankLine, swipeRfidMessageDelay, false);
+//openDoor(serverRequest("0F0304012D,1111"));
+//delay(10000);
 }
