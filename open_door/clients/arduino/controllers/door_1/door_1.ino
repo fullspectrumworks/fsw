@@ -2,6 +2,8 @@
 //                Open Door Client-side Script                 //
 //                    James Scott McDowell                     //
 /////////////////////////////////////////////////////////////////
+//door_1 original beta 1 sw                                    //
+//door_1m_static ip testing on May 2015 version  kk 083115 //
 //  Required Hardware: 1x Arduino Uno                          //
 //                     1x Arduino Ethernet Shield              //
 //                     1x Parallax RFID Card Reader(blue model)//
@@ -52,18 +54,19 @@ int r1=A5;
 int r2=A4;
 int r3=A3;
 int r4=A2;
-int c1=6;
-int c2=7;
-int c3=8;
+int c1=5;//mod kk
+int c2=6;//mod kk
+int c3=7;//mod kk
 const String enterPinMessage = "ENTER YOUR PIN:";
 const String keypadTimeoutMessage1 = "KEYPAD TIMEOUT ";
 int pinDigitDelay = 500;
 int enterPinMessageDelay = 3000;
 int keypadTimeLimit = 10000;
 int keypadTimeoutMessageDelay = 3000;
+int keypadTimeDelay = 500;
 
 //display constants
-const int TxPin = 5;
+const int TxPin = 9;//mod kk
 SoftwareSerial mySerial = SoftwareSerial(255, TxPin);
 const String systemStartMessage = "SYSTEM ONLINE";
 int systemStartMessageDelay = 3000;
@@ -75,15 +78,17 @@ const String accessDeniedMessage = "DENIED         ";
 const int accessGrantedMessageDelay = 1000;
 const int accessDeniedMessageDelay = 1000;
 const int doorDelay = 3000;
-const int doorDriverPin = 9;
+const int doorDriverPin = 3;//mod kk
 
 //rfid reader constants
 const int cardReadDelay = 1500;
 const int enablePin = 2;
 const String swipeRfidMessage = "SWIPE RFID CARD";
+const int swipeRfidMessageDelay = 3000;
 
 //client and server constants
 byte macAddress[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED}; //default mac address used for this arduino
+byte unoIP[] = {192,168,1,1};
 const byte ipAddress[] = {192, 168, 1, 4};                //address of a server on the local network. WARNING: the ip address is randomly reassigned find the new address with ifconfig or ipconfig
 const int serverPort = 100;                               //specifies which port to connect to on the server (use port 101, 102, 103, etc. if you plan on using more than one client system)
 const String successfulConnectionMessage = "CONNECTED";
@@ -120,18 +125,23 @@ void setup() {
     digitalWrite(TxPin, HIGH);
     mySerial.begin(9600);
     delay(100);
-    displayMessage(systemStartMessage, blankLine, systemStartMessageDelay);
+    displayMessage(systemStartMessage, blankLine, systemStartMessageDelay, true);
     Serial.begin(2400);                                   //RFID reader SOUT pin connected to Serial RX pin at 2400bps
     pinMode(enablePin, OUTPUT);                           //set digital pin 2 as OUTPUT to connect it to the RFID /ENABLE pin. Enabling the RFID reader causes the display to be less bright
     digitalWrite(enablePin, LOW);                         //activate the RFID reader
     pinMode(doorDriverPin, OUTPUT);                       //initialize digital pin 6 as an output; the normal pin 13 will not work with this configuration.
-    Ethernet.begin(macAddress);                           //an ethernet cable must be plugged into the Arduino for this line to work.
+   // Ethernet.begin(macAddress);                           //an ethernet cable must be plugged into the Arduino for this line to work.
+   Ethernet.begin(macAddress, unoIP);
+   delay(500); // give ethershield time to init
 }
 
+/////////////////////////////////////////////////////////////////
+//                         Functions                           //
+/////////////////////////////////////////////////////////////////
 String getPIN(){
   //As soon as the system is ready to collect the user's PIN, fire off a short tone to notify the user.
-  mySerial.write(212);                                  // Quarter note
-  mySerial.write(220);                                  // A tone
+  //mySerial.write(212);                                  // Quarter note
+  //mySerial.write(220);                                  // A tone
 
   String pin = "";
   String maskedPIN = "";
@@ -198,8 +208,8 @@ String getPIN(){
     //checking each column for row1 one by one
     if(digitalRead(c2)==0)
     { pin += "0"; maskedPIN += "*"; }
-    delay(100);
-    keypadTimer += 100; 
+    delay(keypadTimeDelay);
+    keypadTimer += keypadTimeDelay; 
     
     int blankLine_maskedPIN_length_difference = blankLine.length() - maskedPIN.length();
     String tempMaskedPIN = maskedPIN;
@@ -210,7 +220,7 @@ String getPIN(){
     displayPersistentMessage(enterPinMessage, tempMaskedPIN);
   }
   if(keypadTimer == keypadTimeLimit){
-    displayMessage(keypadTimeoutMessage1, blankLine, keypadTimeoutMessageDelay);
+    displayMessage(keypadTimeoutMessage1, blankLine, keypadTimeoutMessageDelay, true);
   }
   return pin;
 }
@@ -227,23 +237,22 @@ void displayPersistentMessage(String firstLine, String secondLine){
 }
 
 //displays a message on the 2 x 16 Parallax lcd for a short period of time
-void displayMessage(String firstLine, String secondLine, int delayTime){
+void displayMessage(String firstLine, String secondLine, int delayTime, boolean soundFlag){
     mySerial.write(12);                                   // Clear             
     mySerial.write(17);                                   // Turn backlight on
     delay(5);                                             // Required delay
     mySerial.print(firstLine);                            // First line
     mySerial.write(13);                                   // Form feed
     mySerial.print(secondLine);                           // Second line
-    mySerial.write(212);                                  // Quarter note
-    mySerial.write(220);                                  // A tone
+    if(soundFlag == true){
+        mySerial.write(212);                              // Quarter note
+        mySerial.write(220);                              // A tone
+    }
     delay(delayTime);                                     // Wait for a specified time
     mySerial.write(18);                                   // Turn backlight off
     mySerial.write(12);                                   // Clear
 }
 
-/////////////////////////////////////////////////////////////////
-//                         Functions                           //
-/////////////////////////////////////////////////////////////////
 //rfid reading algorithm that returns the rfid code as a character array
 char* getRFID(){
     if(Serial.available() > 0) {                          //if data available from reader
@@ -278,16 +287,16 @@ char* getRFID(){
 void openDoor(char controlCharacter){
   if(controlCharacter == '1'){                              //a server response of '1' means that the user is allowed door access
     //Sends out a short tone to notify the user that they are welcome to enter
-    mySerial.write(212);                                  // Quarter note
-    mySerial.write(220);                                  // A tone
+    //mySerial.write(212);                                  // Quarter note
+    //mySerial.write(220);                                  // A tone
     
-    displayPersistentMessage(accessGrantedMessage, blankLine);
+    //displayPersistentMessage(accessGrantedMessage, blankLine);
     digitalWrite(doorDriverPin, HIGH);                    //turn the door driver on (HIGH is the voltage level)
     delay(doorDelay);                                     //holds the door driver output high for a brief period of time to allow the user time to open the door
     digitalWrite(doorDriverPin, LOW);                     //turn the door driver off by making the voltage LOW
   }
   else if(controlCharacter == '0'){                         //a server response of '0' means that the user has been denied door access
-    displayMessage(accessDeniedMessage, blankLine, accessDeniedMessageDelay);
+    //displayMessage(accessDeniedMessage, blankLine, accessDeniedMessageDelay, true);
   }
 }
 
@@ -306,7 +315,7 @@ char serverRequest(String postData){
         client.println(postData);
     }
     else {
-        displayMessage(unsuccessfulConnectionMessage, blankLine, unsuccessfulConnectionMessageDelay);
+        displayMessage(unsuccessfulConnectionMessage, blankLine, unsuccessfulConnectionMessageDelay, true);
     }
 
     delay(clientDelay);                                   //a delay between contacting the server and recieving a response from the server is necessary
@@ -324,7 +333,7 @@ char serverRequest(String postData){
 //                         Main Loop                           //
 /////////////////////////////////////////////////////////////////
 void loop() {
-    displayPersistentMessage(swipeRfidMessage, blankLine);
+    displayMessage(swipeRfidMessage, blankLine, swipeRfidMessageDelay, false);
     char* rfidCode = getRFID();
 
     if(rfidCode[0] != 0){                                  //only connect to the server if a rfid has been read
@@ -336,4 +345,7 @@ void loop() {
             openDoor(serverResponse);
         }
     }
+//displayMessage(swipeRfidMessage, blankLine, swipeRfidMessageDelay, false);
+//openDoor(serverRequest("0F0304012D,1111"));
+//delay(10000);
 }
