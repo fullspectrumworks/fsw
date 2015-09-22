@@ -46,7 +46,7 @@
 //                     Global Variables                        //
 /////////////////////////////////////////////////////////////////
 //exit button variables
-const int buttonPin = 3;     // the number of the pushbutton pin
+const int buttonPin = A1;     // the number of the pushbutton pin
 int buttonState = 0;         // variable for reading the pushbutton status
 
 //keypad constants
