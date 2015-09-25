@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=delete
+Comment=Launches the page that allows you to delete people from the database.
+Icon=/usr/share/pixmaps/openbox.xpm
+Exec=lxterminal -t "[delete] - Open a web browser and go to http://localhost:83" --working-directory=/var/open_door/forms/ -e sudo python delete.py
+Type=Application
+Encoding=UTF-8
+Terminal=false
+Categories=None;

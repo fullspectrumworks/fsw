@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=door_1
+Comment=Launches the server controller for door 1.
+Icon=/usr/share/pixmaps/openbox.xpm
+Exec=lxterminal -t "[door_1] - Power on the door client and leave this window open." --working-directory=/var/open_door/controllers/ -e sudo python door_1.py
+Type=Application
+Encoding=UTF-8
+Terminal=false
+Categories=None;

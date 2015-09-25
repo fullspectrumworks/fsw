@@ -23,6 +23,11 @@ sudo cp ../servers/python/flask/forms/edit.py /var/open_door/forms
 sudo cp ../servers/python/flask/forms/lookup.py /var/open_door/forms
 sudo python ../databases/python/sqlite/scripts/create_people_table.py
 sudo python ../databases/python/sqlite/scripts/create_new_rfid_table.py
+sudo cp ../launchers/door_1.desktop /home/pi/Desktop
+sudo cp ../launchers/add.desktop /home/pi/Desktop
+sudo cp ../launchers/lookup.desktop /home/pi/Desktop
+sudo cp ../launchers/edit.desktop /home/pi/Desktop
+sudo cp ../launchers/delete.desktop /home/pi/Desktop
 sleep 1
 sudo mv people.db /var/open_door/database/tables
 sudo mv new_rfid.db /var/open_door/database/tables

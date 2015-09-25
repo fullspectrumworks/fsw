@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=add
+Comment=Launches the page that allows you to add people to the database.
+Icon=/usr/share/pixmaps/openbox.xpm
+Exec=lxterminal -t "[add] - Open a web browser and go to http://localhost:80" --working-directory=/var/open_door/forms/ -e sudo python add.py
+Type=Application
+Encoding=UTF-8
+Terminal=false
+Categories=None;

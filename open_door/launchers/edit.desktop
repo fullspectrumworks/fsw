@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=edit
+Comment=Launches the page that allows you to edit people in the database.
+Icon=/usr/share/pixmaps/openbox.xpm
+Exec=lxterminal -t "[edit] - Open a web browser and go to http://localhost:82" --working-directory=/var/open_door/forms/ -e sudo python edit.py
+Type=Application
+Encoding=UTF-8
+Terminal=false
+Categories=None;

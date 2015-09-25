@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=lookup
+Comment=Launches the page that allows you to look up people in the database.
+Icon=/usr/share/pixmaps/openbox.xpm
+Exec=lxterminal -t "[lookup] - Open a web browser and go to http://localhost:81" --working-directory=/var/open_door/forms/ -e sudo python lookup.py
+Type=Application
+Encoding=UTF-8
+Terminal=false
+Categories=None;
