@@ -344,6 +344,7 @@ void loop() {
             char serverResponse = serverRequest(rfidAndPin);
             openDoor(serverResponse);
         }
+        rfidCode[0] = 0;  //Resets the rfidCode array to zero to avoid triggering the above condition inadvertently.
     }
 //displayMessage(swipeRfidMessage, blankLine, swipeRfidMessageDelay, false);
 //openDoor(serverRequest("0F0304012D,1111"));
